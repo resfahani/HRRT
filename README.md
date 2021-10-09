@@ -10,7 +10,7 @@ Radon Transform
 
 <br />
 LS Radon Transform
-![alt text](https://github.com/resfahani/HRRT/blob/master/fig/LS.png)
+![plot](https://github.com/resfahani/HRRT/blob/master/fig/LS.png)
 
 <br />
 IRLS Radon Transform
