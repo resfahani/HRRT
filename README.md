@@ -2,7 +2,7 @@
 High Resolution Linear Radon Transform (Slant stack)
 <br />
 
-The package contains adjoint, Least square, and iterative reweighted least square Radon transform. 
+The package contains adjoint, Least squares, and iterative reweighted least squares Radon transform. 
 
 <br />
 
