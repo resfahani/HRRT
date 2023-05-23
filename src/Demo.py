@@ -183,7 +183,8 @@ ax.xaxis.set_label_position('top')
 ax.xaxis.tick_top()
 ax.set_ylabel('tau (s)')
 ax.set_xlabel('velocity (m/s)')
-ax.set_title('Radon (IRLS)')
+ax.set_title('Radon domain(IRLS)')
+
 
 ax = axs[2]
 ax.imshow(d - drec, aspect='auto',cmap ='seismic', extent=[h[0], h[-1],  dt*nt, 0 ], clim =[np.min(d), np.max(d)])

@@ -5,7 +5,7 @@ import scipy as sp
 import matplotlib.pyplot as plt
 from scipy import linalg
 from scipy.sparse.linalg import (lsqr, cg)
-
+from scipy.fftpack import (fft, ifft)
 
 
 def Inverse_Radon_Transform(m, h, dt, qmin, qmax):
@@ -42,7 +42,7 @@ def Inverse_Radon_Transform(m, h, dt, qmin, qmax):
     
     nfft = 1 * next_power_of_2(nt)
     
-    M = np.fft.fft(m, n = nfft, axis = 0)
+    M = fft(m, n = nfft, axis = 0)
     
     
     ilow = 0
@@ -67,7 +67,7 @@ def Inverse_Radon_Transform(m, h, dt, qmin, qmax):
         L = L  * op
 
 
-    d = 2 * np.fft.ifft(D ,n = 1 * nfft ,axis = 0)
+    d = 2 * ifft(D ,n = 1 * nfft ,axis = 0)
     d = np.real(d)
     d =d[:nt ,:]
     
@@ -113,7 +113,7 @@ def Radon_Transform(d, h, dt, qmin, qmax, nq, mode , mu = 1,  maxiter = 10):
     q = np.linspace(qmin, qmax, nq)    
 
     nfft = 1 * next_power_of_2(nt)
-    D = np.fft.fft(d, n = nfft, axis = 0)
+    D = fft(d, n = nfft, axis = 0)
     
     ilow = 0
     ihigh = nfft//2
@@ -150,7 +150,7 @@ def Radon_Transform(d, h, dt, qmin, qmax, nq, mode , mu = 1,  maxiter = 10):
         
         L = L  * op
 
-    m = 2 * np.fft.ifft(M ,n = 1 * nfft ,axis = 0)
+    m = 2 * ifft(M ,n = 1 * nfft ,axis = 0)
     m = np.real(m)
     m =m[:nt ,:]
     
@@ -161,7 +161,7 @@ def Radon_Transform(d, h, dt, qmin, qmax, nq, mode , mu = 1,  maxiter = 10):
 def PhVelEst(m, dt):
     nt, nq = np.shape(m)
     nfft = 2 * next_power_of_2(nt)
-    M = np.fft.fft(m, n = nfft, axis = 0)
+    M = fft(m, n = nfft, axis = 0)
     ihigh = nfft//2
     f = np.arange(nfft//2)/nfft /dt
     
@@ -179,6 +179,8 @@ def next_power_of_2(n):
     Return next power of 2 greater than or equal to n
     """
     return 2**(n-1).bit_length()
+
+
 
 
 def IRLS(A, b, gamma, maxiter = 10):
@@ -216,7 +218,7 @@ def IRLS(A, b, gamma, maxiter = 10):
     n1, n2 = A.shape
     
     I = np.eye(n2)
-    
+
     W = np.eye(n1)
     
     
