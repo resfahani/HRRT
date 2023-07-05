@@ -54,7 +54,9 @@ def Inverse_Radon_Transform(m, h, dt, qmin, qmax):
     op = np.exp(1j * f * h[:,np.newaxis ] @ q[np.newaxis,:])
 
     op = np.conj(op)
+    
     L = np.ones([nx, nq])
+    
     I = np.eye(nx)
 
     for ifreq in range(ilow, ihigh):
@@ -74,7 +76,7 @@ def Inverse_Radon_Transform(m, h, dt, qmin, qmax):
     return d
 
 
-def Radon_Transform(d, h, dt, qmin, qmax, nq, mode , mu = 1,  maxiter = 10):
+def Radon_Transform(d, h, dt, qmin, qmax, nq, mode , mu = 1, gamma =1,  maxiter = 10):
     """
     Radon Trasform (from data domain to Tau-p domain)
 
@@ -145,6 +147,10 @@ def Radon_Transform(d, h, dt, qmin, qmax, nq, mode , mu = 1,  maxiter = 10):
             y = IRLS(L, p, gamma= mu, maxiter = maxiter)
             
             
+        elif mode == "ADMM":
+            
+            y = ADMM(L, p, gamma=gamma, mu=mu, maxiter = maxiter)
+
         
         M[ifreq,:] = np.squeeze(y)
         
@@ -234,4 +240,37 @@ def IRLS(A, b, gamma, maxiter = 10):
         I =  np.diag(1/np.squeeze(np.sqrt(abs(x)**2  + 1e-5 * np.max(abs(x)) )))**2
         
     return x
+
+
+def ADMM(A, b, gamma, mu, maxiter = 10):
+
+    n1, n2 = A.shape
+    
+    I = np.eye(n2)
+
+    LHS = np.linalg.inv(I + gamma *A.conj().T.dot(A))
+    
+    y0 = b.copy()
+    lamnda1 = np.zeros([n2,1])
+    lamda0 = np.zeros_like(b)
+    y1 = np.zeros([n2,1])
+
+    for _ in range(maxiter):
+        
+        x = np.dot(LHS, (y1 + lamnda1) + gamma * A.conj().T.dot(lamda0+y0))
+        
+        u = x - lamnda1
+        
+        Ux = 1-( mu * np.max(np.abs(u))/np.abs(u));
+        
+        # Clipping the 
+        y1 = np.clip(Ux,0, np.max(Ux)+100) * (u);
+        
+        lamnda1 = lamnda1 +  (y1 - x)
+        
+        lamda0 = lamda0 + (y0-A.dot(x));
+    
+    return y1
+        
+
 
