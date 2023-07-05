@@ -18,8 +18,8 @@ nq = 256
 ## Radon Domain, Put wavelet in the Radon domain! 
 m = np.zeros([nt, nq])
 m[50:50+len(vec2),100] = vec2
-m[20:20+len(vec2),80] = vec2
-m[80:80+len(vec2),50] = vec2
+m[20:20+len(vec2),80] = vec2*1
+m[80:80+len(vec2),50] = vec2*1
 
 h = np.arange(128)*3
 
@@ -208,7 +208,7 @@ plt.savefig('IRLS.png', dpi=500, transparent = True)
 
 # Radon transform 
 
-M = rt.Radon_Transform(d, h, dt, qmin, qmax, nq, mode = "ADMM", mu = 0.9 , gamma = 3, maxiter = 50)
+M = rt.Radon_Transform(d, h, dt, qmin, qmax, nq, mode = "ADMM", mu = 2 , gamma = 1, maxiter = 500)
 
 #% Tau-P representation
 
@@ -228,7 +228,6 @@ ax.xaxis.tick_top()
 ax.set_ylabel(' Time (s)')
 ax.set_xlabel('Offset')
 
-
 #plt.colorbar()
 
 ax.set_title('Data domain')
@@ -241,7 +240,7 @@ ax.xaxis.set_label_position('top')
 ax.xaxis.tick_top()
 ax.set_ylabel('tau (s)')
 ax.set_xlabel('velocity (m/s)')
-ax.set_title('Radon domain(ADMM)')
+ax.set_title('Radon domain (ADMM)')
 
 
 ax = axs[2]
@@ -256,8 +255,14 @@ ax.set_title('Residual')
 
 plt.savefig('IRLS.png', dpi=500, transparent = True)
 
+%%
+
+a = fft(M, n = 1024, axis = -1)
+
+
+plt.imshow(abs(a), aspect='auto')
 
 
 
 
-
+#%%
