@@ -36,6 +36,10 @@ qmax = 1/100
 d = rt.Inverse_Radon_Transform(m, h, dt, qmin, qmax)
 
 
+
+
+
+
 #%% Adjoin 
 
 
@@ -197,6 +201,62 @@ ax.set_title('Residual')
 
 
 plt.savefig('IRLS.png', dpi=500, transparent = True)
+
+
+#%%  ADMM algorithm 
+
+
+# Radon transform 
+
+M = rt.Radon_Transform(d, h, dt, qmin, qmax, nq, mode = "ADMM", mu = 0.9 , gamma = 3, maxiter = 50)
+
+#% Tau-P representation
+
+drec = rt.Inverse_Radon_Transform(M, h, dt, qmin, qmax)
+
+
+
+fig, axs = plt.subplots(1, 3, constrained_layout=True)
+
+ax = axs[0]
+
+ax.imshow(d, aspect='auto',cmap ='seismic', extent=[h[0], h[-1],  dt*nt, 0 ], clim =[np.min(d), np.max(d)])
+
+ax.xaxis.set_label_position('top')
+ax.xaxis.tick_top()
+
+ax.set_ylabel(' Time (s)')
+ax.set_xlabel('Offset')
+
+
+#plt.colorbar()
+
+ax.set_title('Data domain')
+
+
+ax = axs[1]
+ax.imshow(M[:,::-1], aspect='auto',cmap ='seismic', extent=[1/qmax, 1/qmin,  dt*nt, 0])
+
+ax.xaxis.set_label_position('top')
+ax.xaxis.tick_top()
+ax.set_ylabel('tau (s)')
+ax.set_xlabel('velocity (m/s)')
+ax.set_title('Radon domain(ADMM)')
+
+
+ax = axs[2]
+ax.imshow(d - drec, aspect='auto',cmap ='seismic', extent=[h[0], h[-1],  dt*nt, 0 ], clim =[np.min(d), np.max(d)])
+
+ax.xaxis.set_label_position('top')
+ax.xaxis.tick_top()
+ax.set_ylabel(' Time (s)')
+ax.set_xlabel('Offset')
+ax.set_title('Residual')
+
+
+plt.savefig('IRLS.png', dpi=500, transparent = True)
+
+
 
 
 
